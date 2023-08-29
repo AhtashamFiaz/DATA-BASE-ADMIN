@@ -1,0 +1,58 @@
+
+MASTER-SLAVE MYSQL SERVER
+----------------------------------------------
+Create two containers
+
+Container ID ab = slave  S1-Master
+Container ID: 41 = master   S2-Slave
+
+                       CORRECT 
+
+On Master Server 
+>install mysql-server and mysql-client 
+and secure install
+>start mysql service
+
+
+>move to /etc/mysql/mysql.conf.d/mysqld.cnf
+>Bind address= 0.0.0.0 
+>uncomment 
+server id 
+and logs 
+
+
+move to mysql 
+>mysql -u root
+
+.take backup by mysqldump and move it to other container by docker cp and recover the data
+then 
+>CREATE USER 'slave'@'%' IDENTIFIED BY 'abc@1234';
+>GRANT REPLICATION SLAVE ON *.* TO 'slave'@'%';
+>FLUSH PRIVILEGES;
+
+>SHOW MASTER STATUS;
+>SELECT User, Host FROM mysql.user;
+
+
+On SLAVE server:
+
+Configure mysqld.cnf 
+same way 
+
+>restart mysql service
+
+STOP SLAVE;
+
+CHANGE MASTER TO
+  MASTER_HOST = '172.17.0.2',   -- Master's IP
+  MASTER_PORT = 3306,
+  MASTER_USER = 'slave',
+  MASTER_PASSWORD = 'abc@1234', -- Correct password
+  MASTER_LOG_FILE = 'mysql-bin.000001',  -- Binlog filename      
+  MASTER_LOG_POS = 5642;                 -- Binlog position
+
+START SLAVE;
+SHOW SLAVE STATUS\G;
+
+Now test by adding data in Master Server
+and SHOW on SLAVE.
