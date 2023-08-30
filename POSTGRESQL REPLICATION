@@ -1,0 +1,40 @@
+WE need to have two serviers one for Master and other is the Slave 
+
+             ON MASTER
+.install and configire postgresql 
+
+Ad some database with data in it 
+
+> etc/postgresql/14/main/postgresql.conf
+> scroll down and locate the listen_addresses = master's ip
+> locate the wal_level = logical
+> locate the wal_log_hints =on 
+
+now create replica user 
+
+> CREATE ROLE replica_user WITH REPLICATION LOGIN PASSWORD 'P@ssword321';
+
+Next, access the /etc/postgresql/14/main/pg_hba.conf configuration file.
+
+> host  replication   replica_user  ip_of_slave/32   md5
+
+service postgresql restart 
+
+          ON SLAVE 
+
+Create bacebackup usinhg command given below 
+
+> pg_basebackup -h mastersip -U replica_user -X stream -C -S replica_1 -v -R -W -D /var/lib/postgresql/14/main/
+
+the command copy the bacebackup from Master to the directory on the Slave 
+
+now grant permission 
+> chown postgres -R /var/lib/postgresql/14/main/
+add this path to the postgres.conf file on slave at bacebackup location in the begining of file
+> service postgresql restart
+
+Test Replication by adding more data into masters database and then check its availability on Slave 
+
+if need more help check the link below 
+https://www.cherryservers.com/blog/how-to-set-up-postgresql-database-replication
+
