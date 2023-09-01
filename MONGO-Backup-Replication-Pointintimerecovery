@@ -1,1 +1,31 @@
 
+> First configure mongodb using the original MONGO documentation
+
+                *****************REPLICATION 
+
+Follow Digital oscean
+
+https://www.digitalocean.com/community/tutorials/how-to-configure-a-mongodb-replica-set-on-ubuntu-20-04
+
+
+
+                 *********POINT IN TIME RECOVERY**************
+
+Replication has to be on to take point in time recovery 
+
+Take database dump 
+> mongodump --db car_db --out /path to backup   // try to put oplogs-pkb in same directory 
+
+Take dump of oplogs 
+> mongodump --port 27017 -d local -c 'oplog.rs' --out oplog_bkp
+
+>Time stamp finding command 
+.use database name or just put local at car_db place
+//run both in mongosh 
+> d = db.getSiblingDB("car_db")
+> db.oplog.rs.find({ "ns": "car_db.cars", "op": "d" }).sort({ $natural: 1 }).limit(5)
+
+Restore using oplogs with backup which we have taken 
+.put time stamp in it after oplogLimit 1693563812 :5 five is the limi which we have set in finding the timestamp command 
+//run in root 
+>  mongorestore --oplogReplay --oplogLimit 1693563812:5 ./
