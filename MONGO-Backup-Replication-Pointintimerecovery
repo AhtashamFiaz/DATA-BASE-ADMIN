@@ -29,3 +29,9 @@ Restore using oplogs with backup which we have taken
 .put time stamp in it after oplogLimit 1693563812 :5 five is the limi which we have set in finding the timestamp command 
 //run in root 
 >  mongorestore --oplogReplay --oplogLimit 1693563812:5 ./
+
+
+Can follow dbtut or alexmarquardt for PITR 
+
+https://dbtut.com/index.php/2018/08/18/point-in-time-recovery-on-mongodb-standalone-server/
+https://alexmarquardt.com/2017/01/25/mongodb-point-in-time-restore/#:~:text=A%20manual%20point%2Din%2Dtime%20restore%20is%20achieved%20by%20copying,server%20with%20the%20backup%20data.
